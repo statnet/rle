@@ -7,6 +7,8 @@
 #
 #  Copyright 2007-2019 Statnet Commons
 #######################################################################
+#' @useDynLib rle
+
 .onUnload <- function(libpath){
-  library.dynam.unload("statnet.common",libpath)
+  library.dynam.unload("rle",libpath)
 }

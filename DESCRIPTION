@@ -1,13 +1,12 @@
-Package: statnet.common
-Version: 4.2.0-224
+Package: rle
+Version: 1.0-226
 Date: 2019-01-08
-Title: Common R Scripts and Utilities Used by the Statnet Project Software
+Title: Common functions for run-length encoded vectors
 Authors@R: c(
-	person("Pavel N.", "Krivitsky", role=c("aut","cre"), email="pavel@uow.edu.au"),
-	person("Skye", "Bender-deMoll", role=c("ctb"), email="skyebend@uw.edu"))
-Description: Non-statistical utilities used by the software developed by the Statnet Project. They may also be of use to others.
+	person("Pavel N.", "Krivitsky", role=c("aut","cre"), email="pavel@uow.edu.au"))
+Description: A collection of methods for the rle objects.
 Depends: R (>= 3.5)
-Imports: utils, methods, coda, parallel, tools
+Imports: methods
 BugReports: https://github.com/statnet/statnet.common/issues
 License: GPL-3 + file LICENSE
 URL: http://www.statnet.org

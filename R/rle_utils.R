@@ -30,27 +30,24 @@
   }else as.integer(o)
 }
 
-#' RLE utilities
+#' Unary and binary operations
 #'
-#' Simple utilities for operations on RLE-encoded vectors.
+#' The following unary and binary operations are implemented at this
+#' time, returning an [`rle`] object. 
 #'
 #' @param x,e1,e2 Arguments to unary (`x`) and binary (`e1` and `e2`)
 #'   operators.
 #'
 #' @param FUN A binary function or operator or a name of one. It is
-#'   assumed to be vectorized: it expects two vectors of equal lengths
+#'   assumed to be vectorized: it expects two vectors of equal length
 #'   and outputs a vector of the same length.
 #' 
-#' @param ... For `c`, objects to be concatenated. The first object
-#'   must be of class [`rle`]. For `rep`, see documentation for
-#'   [`rep`]. For `sum`, objects to be summed.
-#' 
-#' @name rle.utils
+#' @name rle-op
 #'
 #' @return Unless otherwise stated, all functions return an [`rle`]
 #'   object. By default, the functions and the operators do not merge
 #'   adjacent runs with the same value. This must be done explicitly
-#'   with [`compact.rle`].
+#'   with [`compact`].
 #' 
 #' @examples
 #'
@@ -59,9 +56,19 @@
 #'
 NULL
 
-#' @rdname rle.utils
-#'
+
+
+#' @rdname rle-methods
+#' 
+#' @param x an [`rle`] object.
+#' 
+#' @param ... For `c`, objects to be concatenated. The first object
+#'   must be of class [`rle`]. For `sum`, objects to be summed.
+#' 
 #' @examples
+#' x <- rle(as.logical(rbinom(10,1,.7)))
+#' y <- rle(as.logical(rbinom(10,1,.3)))
+#' 
 #' stopifnot(isTRUE(all.equal(c(inverse.rle(x),inverse.rle(y)),inverse.rle(c(x,y)))))
 #' 
 #' @export
@@ -77,7 +84,7 @@ c.rle <- function(...){
   o
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((!inverse.rle(x)),inverse.rle(!x))))
 #' @export
@@ -86,7 +93,7 @@ c.rle <- function(...){
   x
 }
 
-#' @describeIn rle.utils
+#' @describeIn rle-op
 #'
 #' Perform an arbitrary binary operation on the pair of vectors
 #' represented by the [`rle`] objects.
@@ -103,7 +110,7 @@ binop.rle <- function(e1, e2, FUN){
             class="rle")
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)|inverse.rle(y)),inverse.rle(x|y))))
 #' @export
@@ -111,7 +118,7 @@ binop.rle <- function(e1, e2, FUN){
   binop.rle(e1, e2, `|`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)&inverse.rle(y)),inverse.rle(x&y))))
 #' @export
@@ -119,17 +126,27 @@ binop.rle <- function(e1, e2, FUN){
   binop.rle(e1, e2, `&`)
 }
 
-#' @describeIn rle.utils
+#' Compact the [`rle`] object by merging adjacent runs
 #'
-#' Compact the [`rle`] object by merging adjacent runs.
+#' @param x an [`rle`] object.
+#' 
+#' @param ... additional objects; if given, all arguments are
+#'   concatenated.
 #'
-#' @note Since [`rle`] stores run lengths as integers, [`compact.rle`]
+#' @note Since [`rle`] stores run lengths as integers, [`compact`]
 #'   will not merge runs that add up to lengths greater than what can
 #'   be represented by a 32-bit signed integer
 #'   (\Sexpr{.Machine$integer.max}).
+#'
+#' @note `compact()` is a generic function, of which `compact.rle()`
+#'   is the sole method at this time.
 #' 
 #' @examples
-#' stopifnot(identical(rle(inverse.rle(x)&inverse.rle(y)),compact.rle(x&y)))
+#'
+#' x <- rle(as.logical(rbinom(10,1,.7)))
+#' y <- rle(as.logical(rbinom(10,1,.3)))
+#'
+#' stopifnot(identical(rle(inverse.rle(x)&inverse.rle(y)),compact(x&y)))
 #'
 #' big <- structure(list(lengths=as.integer(rep(.Machine$integer.max/4,6)),
 #'                       values=rep(TRUE,6)), class="rle")
@@ -138,10 +155,17 @@ binop.rle <- function(e1, e2, FUN){
 #'                         data=as.data.frame(unclass(big)),FUN=sum)
 #'               ==
 #'               aggregate(as.numeric(lengths)~values,
-#'                         data=as.data.frame(unclass(compact.rle(big))),
+#'                         data=as.data.frame(unclass(compact(big))),
 #'                         FUN=sum)))
 #' @export
-compact.rle <- function(x){
+compact <- function(x, ...) UseMethod("compact")
+
+#' @rdname compact
+#' @export
+compact.rle <- function(x, ...){
+  # If multiple inputs, concatenate.
+  x <- c(x, ...)
+  
   # First, strip the 0-length runs.
   x$values <- x$values[x$lengths!=0]
   x$lengths <- x$lengths[x$lengths!=0]
@@ -156,11 +180,13 @@ compact.rle <- function(x){
             class = "rle")
 }
 
-#' @rdname rle.utils
+#' [`rle`] methods for common functions on vectors
+#' 
+#' @rdname rle-methods
 #' 
 #' @param na.rm see documentation for [`any`], [`all`], and [`sum`].
 #'
-#' @return [`any`], [`all`], [`sum`], and [`length`] return logical, logical, numeric, and numeric vectors, respectively.
+#' @return [`any`], [`all`], [`mean`], [`sum`], and [`length`] return logical, logical, numeric, numeric, and numeric vectors, respectively.
 #' 
 #' @examples
 #'
@@ -181,7 +207,7 @@ any.rle <- function(..., na.rm = FALSE){
   }
 }
 
-#' @rdname rle.utils
+#' @rdname rle-methods
 #' @examples
 #' 
 #' stopifnot(isTRUE(all.equal(all(x),all(inverse.rle(x)))))
@@ -198,7 +224,7 @@ all.rle <- function(..., na.rm = FALSE){
   }
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #'
 #' x <- rle(sample(c(-1,+1), 10, c(.7,.3), replace=TRUE))
@@ -210,7 +236,7 @@ all.rle <- function(..., na.rm = FALSE){
   binop.rle(e1, e2, `*`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)/inverse.rle(y)),inverse.rle(x/y))))
 #' @export
@@ -218,7 +244,7 @@ all.rle <- function(..., na.rm = FALSE){
   binop.rle(e1, e2, `/`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((-inverse.rle(y)),inverse.rle(-y))))
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)-inverse.rle(y)),inverse.rle(x-y))))
@@ -231,7 +257,7 @@ all.rle <- function(..., na.rm = FALSE){
     binop.rle(e1, e2, `-`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((+inverse.rle(y)),inverse.rle(+y))))
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)+inverse.rle(y)),inverse.rle(x+y))))
@@ -244,7 +270,7 @@ all.rle <- function(..., na.rm = FALSE){
     binop.rle(e1, e2, `+`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)^inverse.rle(y)),inverse.rle(x^y))))
 #' @export
@@ -252,7 +278,7 @@ all.rle <- function(..., na.rm = FALSE){
   binop.rle(e1, e2, `^`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)%%inverse.rle(y)),inverse.rle(x%%y))))
 #' @export
@@ -260,7 +286,7 @@ all.rle <- function(..., na.rm = FALSE){
   binop.rle(e1, e2, `%%`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)%/%inverse.rle(y)),inverse.rle(x%/%y))))
 #' @export
@@ -268,7 +294,7 @@ all.rle <- function(..., na.rm = FALSE){
   binop.rle(e1, e2, `%/%`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal(inverse.rle(x)==inverse.rle(y),inverse.rle(x==y))))
 #' @export
@@ -276,7 +302,7 @@ all.rle <- function(..., na.rm = FALSE){
   binop.rle(e1, e2, `==`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)>inverse.rle(y)),inverse.rle(x>y))))
 #' @export
@@ -284,7 +310,7 @@ all.rle <- function(..., na.rm = FALSE){
   binop.rle(e1, e2, `>`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)<inverse.rle(y)),inverse.rle(x<y))))
 #' @export
@@ -292,7 +318,7 @@ all.rle <- function(..., na.rm = FALSE){
   binop.rle(e1, e2, `<`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)!=inverse.rle(y)),inverse.rle(x!=y))))
 #' @export
@@ -300,7 +326,7 @@ all.rle <- function(..., na.rm = FALSE){
   binop.rle(e1, e2, `!=`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)<=inverse.rle(y)),inverse.rle(x<=y))))
 #' @export
@@ -308,7 +334,7 @@ all.rle <- function(..., na.rm = FALSE){
   binop.rle(e1, e2, `<=`)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-op
 #' @examples
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)>=inverse.rle(y)),inverse.rle(x>=y))))
 #' @export
@@ -317,7 +343,7 @@ all.rle <- function(..., na.rm = FALSE){
 }
 
 
-#' @rdname rle.utils
+#' @rdname rle-methods
 #'
 #' @examples
 #' 
@@ -337,7 +363,7 @@ sum.rle <- function(..., na.rm = FALSE){
 
 
 
-#' @rdname rle.utils
+#' @rdname rle-methods
 #'
 #' @examples
 #' 
@@ -350,7 +376,7 @@ mean.rle <- function(x, na.rm = FALSE, ...){
   else sum(x$values*as.numeric(x$lengths), na.rm = FALSE, ...)/length(x)
 }
 
-#' @rdname rle.utils
+#' @rdname rle-methods
 #'
 #' @note The [`length`] method returns the length of the vector
 #'   represented by the object, obtained by summing the lengths of
@@ -366,7 +392,7 @@ length.rle <- function(x){
   sum(as.numeric(x$lengths))
 }
 
-#' @rdname rle.utils
+#' @rdname rle-methods
 #'
 #' @examples
 #' x$values[1] <- NA
@@ -380,15 +406,15 @@ is.na.rle <- function(x){
   x
 }
 
-#' @rdname rle.utils
+#' A [`rep`] method for [`rle`] objects
+#'
+#' @param x an [`rle`] object.
+#' 
+#' @param ... see documentation for [`rep()`].
 #'
 #' @param scale whether to replicate the elements of the
 #'   RLE-compressed vector or the runs.
 #'
-#' @param doNotCompact whether the method should call [`compact.rle`]
-#'   the results before returning. Methods liable to produce very long
-#'   output vectors, like [`rep`], have this set `FALSE` by default.
-#' 
 #' @note The [`rep`] method for [`rle`] objects is very limited at
 #'   this time. Even though the default setting is to replicate
 #'   elements of the vector, only the run-replicating functionality is
@@ -407,7 +433,7 @@ is.na.rle <- function(x){
 #'                                inverse.rle(rep(x, max(y), scale="element")))))
 #' 
 #' @export
-rep.rle <- function(x, ..., scale = c("element", "run"), doNotCompact = FALSE){
+rep.rle <- function(x, ..., scale = c("element", "run")){
   scale <- match.arg(scale)
   ddd <- list(...)
 
@@ -429,11 +455,10 @@ rep.rle <- function(x, ..., scale = c("element", "run"), doNotCompact = FALSE){
     x$values <- rep(x$values, ...)
     x$lengths <- rep(x$lengths, ...)
   }
-  
-  if(doNotCompact) x else compact.rle(x)
+  x
 }
 
-#' Coerce to [`rle`] if not already an [`rle`] object.
+#' Coerce to [`rle`] if not already an [`rle`] object
 #'
 #' @param x the object to be coerced.
 #' 
