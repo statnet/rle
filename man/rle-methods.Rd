@@ -8,6 +8,7 @@
 \alias{mean.rle}
 \alias{length.rle}
 \alias{is.na.rle}
+\alias{str.rle}
 \title{\code{\link{rle}} methods for common functions on vectors}
 \usage{
 \method{c}{rle}(...)
@@ -23,6 +24,8 @@
 \method{length}{rle}(x)
 
 \method{is.na}{rle}(x)
+
+\method{str}{rle}(object, ...)
 }
 \arguments{
 \item{...}{For \code{c}, objects to be concatenated. The first object
@@ -41,7 +44,9 @@ must be of class \code{\link{rle}}. For \code{sum}, objects to be summed.}
 \note{
 The \code{\link{length}} method returns the length of the vector
 represented by the object, obtained by summing the lengths of
-individual runs.
+individual runs. This can be overridden by setting
+\code{options(rle.length_represented = FALSE)}, which causes it to
+return the length of the underlying list (usually 2) instead.
 }
 \examples{
 x <- rle(as.logical(rbinom(10,1,.7)))
@@ -76,5 +81,8 @@ x$values[1] <- NA
 y$values[1] <- NA
 stopifnot(isTRUE(all.equal(is.na(inverse.rle(x)),inverse.rle(is.na(x)))))
 stopifnot(isTRUE(all.equal(is.na(inverse.rle(y)),inverse.rle(is.na(y)))))
+
+
+str(x)
 
 }
