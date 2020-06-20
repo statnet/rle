@@ -67,7 +67,7 @@ and outputs a vector of the same length.}
 Unless otherwise stated, all functions return an \code{\link{rle}}
 object. By default, the functions and the operators do not merge
 adjacent runs with the same value. This must be done explicitly
-with \code{\link{compact}}.
+with \code{\link{compress.rle}}.
 }
 \description{
 The following unary and binary operations are implemented at this

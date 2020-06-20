@@ -4,7 +4,7 @@
 \alias{rep.rle}
 \title{A \code{\link{rep}} method for \code{\link{rle}} objects}
 \usage{
-\method{rep}{rle}(x, ..., scale = c("element", "run"))
+\method{rep}{rle}(x, ..., scale = c("element", "run"), doNotCompact = FALSE)
 }
 \arguments{
 \item{x}{an \code{\link{rle}} object.}
@@ -13,6 +13,10 @@
 
 \item{scale}{whether to replicate the elements of the
 RLE-compressed vector or the runs.}
+
+\item{doNotCompact}{whether the method should call \code{\link{compress.rle}}
+the results before returning. Methods liable to produce very long
+output vectors, like \code{\link{rep}}, have this set \code{FALSE} by default.}
 }
 \description{
 A \code{\link{rep}} method for \code{\link{rle}} objects
