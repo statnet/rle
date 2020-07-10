@@ -168,8 +168,8 @@ compress <- function(x, ...){
 #' @export
 compress.rle <- function(x, ...){
   # First, strip the 0-length runs.
-  x$values <- x$values[x$lengths!=0]
-  x$lengths <- x$lengths[x$lengths!=0]
+  x$values <- x$values[x$lengths!=0L]
+  x$lengths <- x$lengths[x$lengths!=0L]
   # Second, code distinct values as integers if they are not already.
   remap <- ! storage.mode(x$values) %in% c("integer","logical")
   if(remap){
@@ -188,7 +188,7 @@ compress.rle <- function(x, ...){
 #' [`rle`] methods for common functions on vectors
 #' 
 #' @rdname rle-methods
-#' 
+#'
 #' @param na.rm see documentation for [`any`], [`all`], and [`sum`].
 #'
 #' @return [`any`], [`all`], [`mean`], [`sum`], and [`length`] return logical, logical, numeric, numeric, and numeric vectors, respectively.
@@ -206,9 +206,9 @@ any.rle <- function(..., na.rm = FALSE){
   inl <- list(...)
   inl <- lapply(inl, as.rle)
   if(length(inl)==1){
-    any(inl[[1L]]$values, na.rm = na.rm)
+    any(inl[[1L]]$values[inl[[1L]]$lengths!=0L], na.rm = na.rm)
   }else{
-    any(sapply(inl, any, na.rm = na.rm))
+    any(sapply(inl, function(x, na.rm) any(x$values[x$lengths!=0L]), na.rm = na.rm))
   }
 }
 
@@ -223,9 +223,9 @@ all.rle <- function(..., na.rm = FALSE){
   inl <- list(...)
   inl <- lapply(inl, as.rle)
   if(length(inl)==1){
-    all(inl[[1L]]$values, na.rm = na.rm)
+    all(inl[[1L]]$values[inl[[1L]]$lengths!=0L], na.rm = na.rm)
   }else{
-    all(sapply(inl, all, na.rm = na.rm))
+    all(sapply(inl, function(x, na.rm) all(x$values[x$lengths!=0L]), na.rm = na.rm))
   }
 }
 
