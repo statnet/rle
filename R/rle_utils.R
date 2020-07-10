@@ -145,9 +145,6 @@ compress <- function(x, ...){
 #'   will not merge runs that add up to lengths greater than what can
 #'   be represented by a 32-bit signed integer
 #'   (\Sexpr{.Machine$integer.max}).
-#'
-#' @note `compress()` is a generic function, of which `compress.rle()`
-#'   is the sole method at this time.
 #' 
 #' @examples
 #'

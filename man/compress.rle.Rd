@@ -20,9 +20,6 @@ Since \code{\link{rle}} stores run lengths as integers, \code{\link{compress.rle
 will not merge runs that add up to lengths greater than what can
 be represented by a 32-bit signed integer
 (\Sexpr{.Machine$integer.max}).
-
-\code{compress()} is a generic function, of which \code{compress.rle()}
-is the sole method at this time.
 }
 \examples{
 
