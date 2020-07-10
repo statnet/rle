@@ -34,6 +34,8 @@ must be of class \code{\link{rle}}. For \code{sum}, objects to be summed.}
 \item{na.rm}{see documentation for \code{\link{any}}, \code{\link{all}}, and \code{\link{sum}}.}
 
 \item{x}{an \code{\link{rle}} object.}
+
+\item{object}{an \code{rle} object.}
 }
 \value{
 \code{\link{any}}, \code{\link{all}}, \code{\link{mean}}, \code{\link{sum}}, and \code{\link{length}} return logical, logical, numeric, numeric, and numeric vectors, respectively.

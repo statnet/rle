@@ -496,6 +496,7 @@ as.rle.default <- function(x){
 }
 
 #' @rdname rle-methods
+#' @param object an `rle` object.
 #'
 #' @examples
 #'
