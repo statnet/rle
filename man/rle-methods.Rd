@@ -24,6 +24,8 @@
 must be of class \code{\link{rle}}.}
 
 \item{x, object}{An \code{\link{rle}} object.}
+
+\item{na.rm}{Whether missing values are to be ignored (\code{TRUE}) or propagated (\code{FALSE}).}
 }
 \description{
 Miscellaneous Common Methods for \code{\link{rle}} Objects

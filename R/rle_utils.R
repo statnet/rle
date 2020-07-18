@@ -35,7 +35,7 @@
 #' @title Miscellaneous Common Methods for [`rle`] Objects
 #'
 #' @param x,object An [`rle`] object.
-#'
+#' @param na.rm Whether missing values are to be ignored (`TRUE`) or propagated (`FALSE`).
 #' @param ... For `c`, objects to be concatenated. The first object
 #'   must be of class [`rle`].
 #'
@@ -221,7 +221,8 @@ Math.rle <- function(x, ...){
 #'   calculation is the uncompressed vector actually constructed, of
 #'   course.) The exception is that if `values` are of class
 #'   `integer`, the result will nonetheless always be upcast to
-#'   `numeric` to avert overflows.
+#'   `numeric` to avert overflows. This behaviour may change in the
+#'   future.
 #'
 #' @examples
 #'
@@ -233,6 +234,10 @@ Math.rle <- function(x, ...){
 #'
 #' stopifnot(isTRUE(all.equal(sum(inverse.rle(x),inverse.rle(y)),sum(x,y))))
 #' stopifnot(isTRUE(all.equal(sum(inverse.rle(y)),sum(y))))
+#'
+#' y[5:6] <- NA
+#' stopifnot(isTRUE(all.equal(sum(inverse.rle(y), na.rm=TRUE),sum(y, na.rm=TRUE))))
+#' stopifnot(isTRUE(all.equal(sum(inverse.rle(y), na.rm=FALSE),sum(y, na.rm=FALSE))))
 #'
 #' @export
 Summary.rle <- function(..., na.rm){

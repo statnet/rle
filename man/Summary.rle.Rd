@@ -18,7 +18,8 @@ the original (uncompressed) vector. (At no point in the
 calculation is the uncompressed vector actually constructed, of
 course.) The exception is that if \code{values} are of class
 \code{integer}, the result will nonetheless always be upcast to
-\code{numeric} to avert overflows.
+\code{numeric} to avert overflows. This behaviour may change in the
+future.
 }
 \description{
 Summarisation functions for vectors described in \link{Summary} are implemented for \code{\link{rle}} objects.
@@ -39,5 +40,9 @@ stopifnot(isTRUE(all.equal(any(y),any(inverse.rle(y)))))
 
 stopifnot(isTRUE(all.equal(sum(inverse.rle(x),inverse.rle(y)),sum(x,y))))
 stopifnot(isTRUE(all.equal(sum(inverse.rle(y)),sum(y))))
+
+y[5:6] <- NA
+stopifnot(isTRUE(all.equal(sum(inverse.rle(y), na.rm=TRUE),sum(y, na.rm=TRUE))))
+stopifnot(isTRUE(all.equal(sum(inverse.rle(y), na.rm=FALSE),sum(y, na.rm=FALSE))))
 
 }
