@@ -19,7 +19,7 @@
 #' the product is 0, an empty integer vector is returned.
 #'
 #' @param e1,e2 arguments to multiply, both `<=.Machine$integer.max`.
-#' 
+#'
 #' @noRd
 .run_mul <- function(e1, e2){
   o <- as.numeric(e1)*as.numeric(e2)
@@ -30,19 +30,21 @@
   }else as.integer(o)
 }
 
-#' @rdname rle-methods
-#' 
-#' @param x an [`rle`] object.
-#' 
+#' @name rle-methods
+#'
+#' @title Miscellaneous Common Methods for [`rle`] Objects
+#'
+#' @param x,object An [`rle`] object.
+#'
 #' @param ... For `c`, objects to be concatenated. The first object
-#'   must be of class [`rle`]. For `sum`, objects to be summed.
-#' 
+#'   must be of class [`rle`].
+#'
 #' @examples
 #' x <- rle(as.logical(rbinom(10,1,.7)))
 #' y <- rle(as.logical(rbinom(10,1,.3)))
-#' 
+#'
 #' stopifnot(isTRUE(all.equal(c(inverse.rle(x),inverse.rle(y)),inverse.rle(c(x,y)))))
-#' 
+#'
 #' @export
 c.rle <- function(...){
   l <- list(...)
@@ -64,16 +66,16 @@ c.rle <- function(...){
 #'
 #' @details Supported operations include all elements of the `Ops`
 #'   group, as well as [xor()]. Within the [Arithmetic] and [Logic]
-#'   operators, this includes the following (taken from the R language
-#'   definition): `+`, `-`, `*`, `/`, `^`, `<` , `>`, `<=`, `>=`,
-#'   `!=`, `==`, `%%`, `%/%`, `&`, `|`, `!` but excludes non-vector
-#'   logical functions and operators such as [isTRUE()] and [`&&`].
+#'   operators, this includes (taken from the R help): `+`, `-`, `*`,
+#'   `/`, `^`, `<` , `>`, `<=`, `>=`, `!=`, `==`, `%%`, `%/%`, `&`,
+#'   `|`, `!`, and `xor`; but excludes non-vector logical functions
+#'   and operators such as [isTRUE()] and [`&&`].
 #'
 #' @return In every supported case, the operation should result in an
 #'   [`rle`] that would have resulted had the operation been applied
 #'   to the original (uncompressed) vectors, then compressed using
-#'   [rle()]. (At no point in the calculation are uncompressed vectors
-#'   actually constructed, of course.)
+#'   [rle()]. (At no point in the calculation are the uncompressed
+#'   vectors actually constructed, of course.)
 #'
 #'   An operation between an `rle` and a zero-length object produces
 #'   an empty `rle`.
@@ -81,7 +83,7 @@ c.rle <- function(...){
 #'   By default, the functions and the operators do not merge adjacent
 #'   runs with the same value. This must be done explicitly with
 #'   [`compress.rle`].
-#' 
+#'
 #' @examples
 #'
 #' x <- rle(as.logical(rbinom(10,1,.7)))
@@ -118,7 +120,7 @@ Ops.rle <- function(e1, e2){
   if(missing(e2)){ # Unary operation
     structure(list(lengths = e1$lengths,
                    values = FUN(e1$values)),
-              class="rle")
+              class = "rle")
   }else if(!nzchar(.Method[1L])){ # e1 is not an rle but e2 is
     l <- length(e1)
     if(l == 0L){
@@ -151,7 +153,109 @@ Ops.rle <- function(e1, e2){
     structure(list(lengths = syncinfo$lengths[seq_len(syncinfo$nruns)],
                    values = FUN(e1$values[syncinfo$val1i[seq_len(syncinfo$nruns)]],
                                 e2$values[syncinfo$val2i[seq_len(syncinfo$nruns)]])),
-              class="rle")
+              class = "rle")
+  }
+}
+
+#' Mathematical functions for [`rle`] Objects
+#'
+#' Mathematical functions that work independently elementwise on vectors described in [Math] are implemented for [`rle`] objects. See Details for list of exceptions.
+#'
+#' @param x An [`rle`] object.
+#' @param ... Additional arguments.
+#'
+#' @details Supported functions include all elements of the S3 [Math]
+#'   group excluding the "cumulative" ones, which are not supported at
+#'   this time and will raise an error. As of this writing, functions
+#'   supported include (from R help) `abs`, `sign`, `sqrt`, `floor`,
+#'   `ceiling`, `trunc`, `round`, `signif`, `exp`, `log`, `expm1`,
+#'   `log1p`, `cos`, `sin`, `tan`, `cospi`, `sinpi`, `tanpi`, `acos`,
+#'   `asin`, `atan`, `cosh`, `sinh`, `tanh`, `acosh`, `asinh`,
+#'   `atanh`, `lgamma`, `gamma`, `digamma`, and `trigamma`.
+#'
+#'   Functions `cumsum`, `cumprod`, `cummax`, and `cummin` are not
+#'   supported at this time and will raise an error.
+#'
+#' @return In every supported case, the call should result in an
+#'   [`rle`] that would have resulted had the call been applied to the
+#'   original (uncompressed) vector, then compressed using
+#'   [rle()]. (At no point in the calculation is the uncompressed
+#'   vector actually constructed, of course.)
+#'
+#'   By default, the functions do not merge adjacent
+#'   runs with the same value. This must be done explicitly with
+#'   [`compress.rle`].
+#'
+#' @examples
+#'
+#' x <- rle(sample(runif(2), 10, c(.7,.3), replace=TRUE))
+#'
+#' stopifnot(isTRUE(all.equal(sin(inverse.rle(x)),inverse.rle(sin(x)))))
+#' stopifnot(inherits(try(cumprod(x)), "try-error"))
+#' @export
+Math.rle <- function(x, ...){
+  if(.Generic %in% c("cumsum", "cumprod", "cummax", "cummin"))
+    stop(sQuote(paste0(.Generic,"()")), " method is not yet implemented for ", sQuote("rle"), " objects.")
+
+  FUN <- match.fun(.Generic)
+  structure(list(lengths = x$lengths,
+                 values = FUN(x$values, ...)),
+            class = "rle")
+}
+
+#' Summary methods for [`rle`] objects.
+#'
+#' Summarisation functions for vectors described in [Summary] are implemented for [`rle`] objects.
+#'
+#' @param ... [`rle`] objects or objects that can be coerced to `rle`.
+#' @param na.rm Whether the missing values should be ignored (`TRUE`) or propagated (`FALSE`).
+#'
+#' @details Supported functions include all elements of the S3
+#'   [Summary] group. As of this writing, functions supported include
+#'   (from R help) `all`, `any`, `max`, `min`, `prod`, `range`, and
+#'   `sum`.
+#'
+#' @return In every supported case, the call should produce the same
+#'   result as what would have resulted had the call been applied to
+#'   the original (uncompressed) vector. (At no point in the
+#'   calculation is the uncompressed vector actually constructed, of
+#'   course.) The exception is that if `values` are of class
+#'   `integer`, the result will nonetheless always be upcast to
+#'   `numeric` to avert overflows.
+#'
+#' @examples
+#'
+#' x <- rle(as.logical(rbinom(10,1,.9)))
+#' y <- rle(as.logical(rbinom(10,1,.1)))
+#'
+#' stopifnot(isTRUE(all.equal(any(x, y),any(inverse.rle(x), inverse.rle(y)))))
+#' stopifnot(isTRUE(all.equal(any(y),any(inverse.rle(y)))))
+#'
+#' stopifnot(isTRUE(all.equal(sum(inverse.rle(x),inverse.rle(y)),sum(x,y))))
+#' stopifnot(isTRUE(all.equal(sum(inverse.rle(y)),sum(y))))
+#'
+#' @export
+Summary.rle <- function(..., na.rm){
+  FUN <- match.fun(.Generic)
+
+  inl <- list(...)
+
+  # If it's just one, strip the length-zero runs and evaluate.
+  if(length(inl) == 1L){
+    x <- as.rle(inl[[1L]])
+    keep <- x$lengths!=0L
+    # TODO: Benchmark whether it's better to first check if
+    # any(!keep) or, better yet, write a .Call() function that
+    # returns a flag indicating that as a part of calculating keep.
+    x$values <- x$values[keep]
+    x$lengths <- x$lengths[keep]
+
+    switch(.Generic,
+           sum = sum(x$values*as.numeric(x$lengths), na.rm = na.rm),
+           prod = prod(x$values^as.numeric(x$lengths), na.rm = na.rm),
+           FUN(x$values, na.rm=na.rm)) # The rest only test existence.
+  }else{ # Otherwise, break up, evaluate individually, and recombine.
+    do.call(FUN, c(lapply(inl, FUN, na.rm=na.rm), na.rm=na.rm))
   }
 }
 
@@ -169,7 +273,7 @@ compress <- function(x, ...){
 #' Compress the [`rle`] object by merging adjacent runs
 #'
 #' @param x an [`rle`] object.
-#' 
+#'
 #' @param ... additional objects; if given, all arguments are
 #'   concatenated.
 #'
@@ -177,7 +281,7 @@ compress <- function(x, ...){
 #'   will not merge runs that add up to lengths greater than what can
 #'   be represented by a 32-bit signed integer
 #'   (\Sexpr{.Machine$integer.max}).
-#' 
+#'
 #' @examples
 #'
 #' x <- rle(as.logical(rbinom(10,1,.7)))
@@ -214,77 +318,14 @@ compress.rle <- function(x, ...){
             class = "rle")
 }
 
-#' [`rle`] methods for common functions on vectors
-#' 
-#' @rdname rle-methods
-#'
-#' @param na.rm see documentation for [`any`], [`all`], and [`sum`].
-#'
-#' @return [`any`], [`all`], [`mean`], [`sum`], and [`length`] return logical, logical, numeric, numeric, and numeric vectors, respectively.
-#' 
-#' @examples
-#'
-#' x <- rle(as.logical(rbinom(10,1,.9)))
-#' y <- rle(as.logical(rbinom(10,1,.1)))
-#' 
-#' stopifnot(isTRUE(all.equal(any(x),any(inverse.rle(x)))))
-#' stopifnot(isTRUE(all.equal(any(y),any(inverse.rle(y)))))
-#' 
-#' @export
-any.rle <- function(..., na.rm = FALSE){
-  inl <- list(...)
-  inl <- lapply(inl, as.rle)
-  if(length(inl)==1){
-    any(inl[[1L]]$values[inl[[1L]]$lengths!=0L], na.rm = na.rm)
-  }else{
-    any(sapply(inl, function(x, na.rm) any(x$values[x$lengths!=0L]), na.rm = na.rm))
-  }
-}
-
-#' @rdname rle-methods
-#' @examples
-#' 
-#' stopifnot(isTRUE(all.equal(all(x),all(inverse.rle(x)))))
-#' stopifnot(isTRUE(all.equal(all(y),all(inverse.rle(y)))))
-#' 
-#' @export
-all.rle <- function(..., na.rm = FALSE){
-  inl <- list(...)
-  inl <- lapply(inl, as.rle)
-  if(length(inl)==1){
-    all(inl[[1L]]$values[inl[[1L]]$lengths!=0L], na.rm = na.rm)
-  }else{
-    all(sapply(inl, function(x, na.rm) all(x$values[x$lengths!=0L]), na.rm = na.rm))
-  }
-}
 
 #' @rdname rle-methods
 #'
 #' @examples
-#' 
-#' stopifnot(isTRUE(all.equal(sum(inverse.rle(x)),sum(x))))
-#' stopifnot(isTRUE(all.equal(sum(inverse.rle(y)),sum(y))))
-#' 
-#' @export
-sum.rle <- function(..., na.rm = FALSE){
-  inl <- list(...)
-  inl <- lapply(inl, as.rle)
-  if(length(inl)==1){
-    sum(inl[[1L]]$values*as.numeric(inl[[1L]]$lengths), na.rm = na.rm)
-  }else{
-    sum(sapply(inl, sum, na.rm = na.rm))
-  }
-}
-
-
-
-#' @rdname rle-methods
 #'
-#' @examples
-#' 
 #' stopifnot(isTRUE(all.equal(mean(inverse.rle(x)),mean(x))))
 #' stopifnot(isTRUE(all.equal(mean(inverse.rle(y)),mean(y))))
-#' 
+#'
 #' @export
 mean.rle <- function(x, na.rm = FALSE, ...){
   if(na.rm) sum(x$values*as.numeric(x$lengths), na.rm = TRUE, ...)/sum(!is.na(x))
@@ -318,7 +359,7 @@ length.rle <- function(x){
 #' y$values[1] <- NA
 #' stopifnot(isTRUE(all.equal(is.na(inverse.rle(x)),inverse.rle(is.na(x)))))
 #' stopifnot(isTRUE(all.equal(is.na(inverse.rle(y)),inverse.rle(is.na(y)))))
-#' 
+#'
 #' @export
 is.na.rle <- function(x){
   x$values <- is.na(x$values)
@@ -328,7 +369,7 @@ is.na.rle <- function(x){
 #' A [`rep`] method for [`rle`] objects
 #'
 #' @param x an [`rle`] object.
-#' 
+#'
 #' @param ... see documentation for [`rep()`].
 #'
 #' @param scale whether to replicate the elements of the
@@ -338,7 +379,7 @@ is.na.rle <- function(x){
 #'   [`compress.rle`] the results before returning. Methods liable to
 #'   produce very long output vectors, like [`rep`], have this set
 #'   `FALSE` by default. `doNotCompact` is an old name for this argument.
-#' 
+#'
 #' @note The [`rep`] method for [`rle`] objects is very limited at
 #'   this time. Even though the default setting is to replicate
 #'   elements of the vector, only the run-replicating functionality is
@@ -346,16 +387,16 @@ is.na.rle <- function(x){
 #'   `times` argument).
 #'
 #' @examples
-#' 
+#'
 #' x <- rle(sample(c(-1,+1), 10, c(.7,.3), replace=TRUE))
 #' y <- rpois(length(x$lengths), 2)
-#' 
+#'
 #' stopifnot(isTRUE(all.equal(rep(inverse.rle(x), rep(y, x$lengths)),
 #'                                inverse.rle(rep(x, y, scale="run")))))
 #'
 #' stopifnot(isTRUE(all.equal(rep(inverse.rle(x), max(y)),
 #'                                inverse.rle(rep(x, max(y), scale="element")))))
-#' 
+#'
 #' @export
 rep.rle <- function(x, ..., scale = c("element", "run"), doNotCompact = FALSE, doNotCompress = doNotCompact){
   if(!missing(doNotCompact)) .Deprecated(msg=paste("Argument", sQuote("doNotCompact="), "to", sQuote("rep.rle()"), "is deprecated and has been renamed to", sQuote("doNotCompress="), "."))
@@ -364,7 +405,7 @@ rep.rle <- function(x, ..., scale = c("element", "run"), doNotCompact = FALSE, d
   ddd <- list(...)
 
   if(is.null(names(ddd)) && length(ddd)==1) names(ddd) <- "times"
-  
+
   if(scale=="element" && length(ddd$times)!=1) stop("RLE on element scale is not supported at this time for vector ",sQuote("times")," argument.")
 
   if(length(x$lengths)==length(ddd$times)){ # This handles the specific scale="run" AND times is vector of appropriate length case.
@@ -374,21 +415,21 @@ rep.rle <- function(x, ..., scale = c("element", "run"), doNotCompact = FALSE, d
       list(l = newl, v = newv)
     },
     x$values, x$lengths, ddd$times, SIMPLIFY=FALSE)
-    
+
     x$values <- as.vector(unlist(sapply(tmp, `[[`, "v")))
     x$lengths <- as.integer(unlist(sapply(tmp, `[[`, "l")))
   }else{  # This handles the scale="run" OR times is scalar case.
     x$values <- rep(x$values, ...)
     x$lengths <- rep(x$lengths, ...)
   }
-  
+
   if(doNotCompress) x else compress(x)
 }
 
 #' Coerce to [`rle`] if not already an [`rle`] object
 #'
 #' @param x the object to be coerced.
-#' 
+#'
 #' @export
 as.rle <- function(x){
   UseMethod("as.rle")
@@ -406,7 +447,6 @@ as.rle.default <- function(x){
 }
 
 #' @rdname rle-methods
-#' @param object an `rle` object.
 #'
 #' @examples
 #'
