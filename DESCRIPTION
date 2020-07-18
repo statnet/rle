@@ -10,7 +10,7 @@ BugReports: https://github.com/statnet/rle/issues
 License: GPL-3 + file LICENSE
 URL: https://statnet.org
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Encoding: UTF-8
 Suggests: 
     covr

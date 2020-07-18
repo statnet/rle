@@ -30,34 +30,6 @@
   }else as.integer(o)
 }
 
-#' Unary and binary operations
-#'
-#' The following unary and binary operations are implemented at this
-#' time, returning an [`rle`] object. 
-#'
-#' @param x,e1,e2 Arguments to unary (`x`) and binary (`e1` and `e2`)
-#'   operators.
-#'
-#' @param FUN A binary function or operator or a name of one. It is
-#'   assumed to be vectorized: it expects two vectors of equal length
-#'   and outputs a vector of the same length.
-#' 
-#' @name rle-op
-#'
-#' @return Unless otherwise stated, all functions return an [`rle`]
-#'   object. By default, the functions and the operators do not merge
-#'   adjacent runs with the same value. This must be done explicitly
-#'   with [`compress.rle`].
-#' 
-#' @examples
-#'
-#' x <- rle(as.logical(rbinom(10,1,.7)))
-#' y <- rle(as.logical(rbinom(10,1,.3)))
-#'
-NULL
-
-
-
 #' @rdname rle-methods
 #' 
 #' @param x an [`rle`] object.
@@ -81,46 +53,106 @@ c.rle <- function(...){
   ), class = "rle")
 }
 
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((!inverse.rle(x)),inverse.rle(!x))))
-#' @export
-`!.rle` <- function(x){
-  x$values <- !x$values
-  x
-}
-
-#' @describeIn rle-op
+#' Unary and Binary Operations for [`rle`] Objects
 #'
-#' Perform an arbitrary binary operation on the pair of vectors
-#' represented by the [`rle`] objects.
+#' Unary and binary [Arithmetic] and [Logic] operators (with
+#' exceptions given below) are implemented between two [`rle`] objects
+#' and between an [`rle`] object and a scalar.
+#'
+#' @param e1,e2 Arguments to unary (`e1`) and binary (`e1` and `e2`)
+#'   operators.
+#'
+#' @details Supported operations include all elements of the `Ops`
+#'   group, as well as [xor()]. Within the [Arithmetic] and [Logic]
+#'   operators, this includes the following (taken from the R language
+#'   definition): `+`, `-`, `*`, `/`, `^`, `<` , `>`, `<=`, `>=`,
+#'   `!=`, `==`, `%%`, `%/%`, `&`, `|`, `!` but excludes non-vector
+#'   logical functions and operators such as [isTRUE()] and [`&&`].
+#'
+#' @return In every supported case, the operation should result in an
+#'   [`rle`] that would have resulted had the operation been applied
+#'   to the original (uncompressed) vectors, then compressed using
+#'   [rle()]. (At no point in the calculation are uncompressed vectors
+#'   actually constructed, of course.)
+#'
+#'   An operation between an `rle` and a zero-length object produces
+#'   an empty `rle`.
+#'
+#'   By default, the functions and the operators do not merge adjacent
+#'   runs with the same value. This must be done explicitly with
+#'   [`compress.rle`].
 #' 
-#' @export
-binop.rle <- function(e1, e2, FUN){
-  .check_lengths(e1, e2)
-  f <- match.fun(FUN)
-  e2 <- as.rle(e2)
-  syncinfo <- .Call("sync_RLEs", e1$lengths, e2$lengths)
-  structure(list(lengths = syncinfo$lengths[seq_len(syncinfo$nruns)],
-                 values = FUN(e1$values[syncinfo$val1i[seq_len(syncinfo$nruns)]],
-                              e2$values[syncinfo$val2i[seq_len(syncinfo$nruns)]])),
-            class="rle")
-}
-
-#' @rdname rle-op
 #' @examples
+#'
+#' x <- rle(as.logical(rbinom(10,1,.7)))
+#' y <- rle(as.logical(rbinom(10,1,.3)))
+#'
+#' stopifnot(isTRUE(all.equal((!inverse.rle(x)),inverse.rle(!x))))
+#'
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)|inverse.rle(y)),inverse.rle(x|y))))
-#' @export
-`|.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `|`)
-}
-
-#' @rdname rle-op
-#' @examples
+#'
 #' stopifnot(isTRUE(all.equal((inverse.rle(x)&inverse.rle(y)),inverse.rle(x&y))))
+#'
+#' x <- rle(sample(c(-1,+1), 10, c(.7,.3), replace=TRUE))
+#' y <- rle(sample(c(-1,+1), 10, c(.3,.7), replace=TRUE))
+#'
+#' stopifnot(isTRUE(all.equal((inverse.rle(x)*inverse.rle(y)),inverse.rle(x*y))))
+#' stopifnot(isTRUE(all.equal((2*inverse.rle(y)),inverse.rle(2*y))))
+#' stopifnot(isTRUE(all.equal((inverse.rle(x)*2),inverse.rle(x*2))))
+#'
+#' stopifnot(isTRUE(all.equal((inverse.rle(x)/inverse.rle(y)),inverse.rle(x/y))))
+#' stopifnot(isTRUE(all.equal((2/inverse.rle(y)),inverse.rle(2/y))))
+#' stopifnot(isTRUE(all.equal((inverse.rle(x)/2),inverse.rle(x/2))))
+#'
+#' stopifnot(isTRUE(all.equal((-inverse.rle(y)),inverse.rle(-y))))
+#' stopifnot(isTRUE(all.equal((inverse.rle(x)-inverse.rle(y)),inverse.rle(x-y))))
+#'
+#' stopifnot(isTRUE(all.equal((inverse.rle(x)%/%inverse.rle(y)),inverse.rle(x%/%y))))
+#'
+#' stopifnot(isTRUE(all.equal(inverse.rle(x)==inverse.rle(y),inverse.rle(x==y))))
+#'
+#' stopifnot(isTRUE(all.equal((inverse.rle(x)>inverse.rle(y)),inverse.rle(x>y))))
 #' @export
-`&.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `&`)
+Ops.rle <- function(e1, e2){
+  FUN <- match.fun(.Generic)
+  if(missing(e2)){ # Unary operation
+    structure(list(lengths = e1$lengths,
+                   values = FUN(e1$values)),
+              class="rle")
+  }else if(!nzchar(.Method[1L])){ # e1 is not an rle but e2 is
+    l <- length(e1)
+    if(l == 0L){
+      structure(list(lengths = integer(0),
+                     values = FUN(e1, e2$values)),
+                class = "rle")
+    }else if(l == 1L){
+      structure(list(lengths = e2$lengths,
+                     values = FUN(e1, e2$values)),
+                class = "rle")
+    }else{
+      stop("Binary operations between a non-scalar and an ", sQuote("rle"), " object are not supported at this time.")
+    }
+  }else if(!nzchar(.Method[2L])){ # e2 is not an rle but e1 is
+    l <- length(e2)
+    if(l == 0L){
+      structure(list(lengths = integer(0),
+                     values = FUN(e1$values, e2)),
+                class = "rle")
+    }else if(l == 1L){
+      structure(list(lengths = e1$lengths,
+                     values = FUN(e1$values, e2)),
+                class = "rle")
+    }else{
+      stop("Binary operations between an ", sQuote("rle"), " object and a non-scalar are not supported at this time.")
+    }
+  }else{ # Both are rle.
+    .check_lengths(e1, e2)
+    syncinfo <- .Call("sync_RLEs", e1$lengths, e2$lengths)
+    structure(list(lengths = syncinfo$lengths[seq_len(syncinfo$nruns)],
+                   values = FUN(e1$values[syncinfo$val1i[seq_len(syncinfo$nruns)]],
+                                e2$values[syncinfo$val2i[seq_len(syncinfo$nruns)]])),
+              class="rle")
+  }
 }
 
 #' A generic function for compressing a data structure.
@@ -225,125 +257,6 @@ all.rle <- function(..., na.rm = FALSE){
     all(sapply(inl, function(x, na.rm) all(x$values[x$lengths!=0L]), na.rm = na.rm))
   }
 }
-
-#' @rdname rle-op
-#' @examples
-#'
-#' x <- rle(sample(c(-1,+1), 10, c(.7,.3), replace=TRUE))
-#' y <- rle(sample(c(-1,+1), 10, c(.3,.7), replace=TRUE))
-#' 
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)*inverse.rle(y)),inverse.rle(x*y))))
-#' @export
-`*.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `*`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)/inverse.rle(y)),inverse.rle(x/y))))
-#' @export
-`/.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `/`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((-inverse.rle(y)),inverse.rle(-y))))
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)-inverse.rle(y)),inverse.rle(x-y))))
-#' @export
-`-.rle` <- function(e1, e2){
-  if(missing(e2)){
-    e1$values <- -e1$values
-    e1
-  }else
-    binop.rle(e1, e2, `-`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((+inverse.rle(y)),inverse.rle(+y))))
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)+inverse.rle(y)),inverse.rle(x+y))))
-#' @export
-`+.rle` <- function(e1, e2){
-  if(missing(e2)){
-    e1$values <- +e1$values
-    e1
-  }else
-    binop.rle(e1, e2, `+`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)^inverse.rle(y)),inverse.rle(x^y))))
-#' @export
-`^.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `^`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)%%inverse.rle(y)),inverse.rle(x%%y))))
-#' @export
-`%%.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `%%`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)%/%inverse.rle(y)),inverse.rle(x%/%y))))
-#' @export
-`%/%.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `%/%`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal(inverse.rle(x)==inverse.rle(y),inverse.rle(x==y))))
-#' @export
-`==.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `==`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)>inverse.rle(y)),inverse.rle(x>y))))
-#' @export
-`>.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `>`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)<inverse.rle(y)),inverse.rle(x<y))))
-#' @export
-`<.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `<`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)!=inverse.rle(y)),inverse.rle(x!=y))))
-#' @export
-`!=.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `!=`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)<=inverse.rle(y)),inverse.rle(x<=y))))
-#' @export
-`<=.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `<=`)
-}
-
-#' @rdname rle-op
-#' @examples
-#' stopifnot(isTRUE(all.equal((inverse.rle(x)>=inverse.rle(y)),inverse.rle(x>=y))))
-#' @export
-`>=.rle` <- function(e1, e2){
-  binop.rle(e1, e2, `>=`)
-}
-
 
 #' @rdname rle-methods
 #'
