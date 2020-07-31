@@ -14,15 +14,14 @@ operators.}
 In every supported case, the operation should result in an
 \code{\link{rle}} that would have resulted had the operation been applied
 to the original (uncompressed) vectors, then compressed using
-\code{\link[=rle]{rle()}}. (At no point in the calculation are the uncompressed
-vectors actually constructed, of course.)
+\code{\link[=rle]{rle()}}, with the proviso that if the resulting function creates
+adjacent runs of the same value, they are \emph{not} merged. This must
+be done explicitly with \code{\link{compress.rle}}. (At no point in the
+calculation are the uncompressed vectors actually constructed, of
+course.)
 
 An operation between an \code{rle} and a zero-length object produces
 an empty \code{rle}.
-
-By default, the functions and the operators do not merge adjacent
-runs with the same value. This must be done explicitly with
-\code{\link{compress.rle}}.
 }
 \description{
 Unary and binary \link{Arithmetic} and \link{Logic} operators (with

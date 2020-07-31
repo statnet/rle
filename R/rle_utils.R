@@ -74,15 +74,14 @@ c.rle <- function(...){
 #' @return In every supported case, the operation should result in an
 #'   [`rle`] that would have resulted had the operation been applied
 #'   to the original (uncompressed) vectors, then compressed using
-#'   [rle()]. (At no point in the calculation are the uncompressed
-#'   vectors actually constructed, of course.)
+#'   [rle()], with the proviso that if the resulting function creates
+#'   adjacent runs of the same value, they are *not* merged. This must
+#'   be done explicitly with [`compress.rle`]. (At no point in the
+#'   calculation are the uncompressed vectors actually constructed, of
+#'   course.)
 #'
 #'   An operation between an `rle` and a zero-length object produces
 #'   an empty `rle`.
-#'
-#'   By default, the functions and the operators do not merge adjacent
-#'   runs with the same value. This must be done explicitly with
-#'   [`compress.rle`].
 #'
 #' @examples
 #'
@@ -226,8 +225,8 @@ Math.rle <- function(x, ...){
 #'
 #' @examples
 #'
-#' x <- rle(as.logical(rbinom(10,1,.9)))
-#' y <- rle(as.logical(rbinom(10,1,.1)))
+#' x <- rle(as.logical(rbinom(20,1,.7)))
+#' y <- rle(as.logical(rbinom(20,1,.3)))
 #'
 #' stopifnot(isTRUE(all.equal(any(x, y),any(inverse.rle(x), inverse.rle(y)))))
 #' stopifnot(isTRUE(all.equal(any(y),any(inverse.rle(y)))))
@@ -235,7 +234,7 @@ Math.rle <- function(x, ...){
 #' stopifnot(isTRUE(all.equal(sum(inverse.rle(x),inverse.rle(y)),sum(x,y))))
 #' stopifnot(isTRUE(all.equal(sum(inverse.rle(y)),sum(y))))
 #'
-#' y[5:6] <- NA
+#' y$values[2:3] <- NA
 #' stopifnot(isTRUE(all.equal(sum(inverse.rle(y), na.rm=TRUE),sum(y, na.rm=TRUE))))
 #' stopifnot(isTRUE(all.equal(sum(inverse.rle(y), na.rm=FALSE),sum(y, na.rm=FALSE))))
 #'
@@ -342,7 +341,7 @@ mean.rle <- function(x, na.rm = FALSE, ...){
 #' @note The [`length`] method returns the length of the vector
 #'   represented by the object, obtained by summing the lengths of
 #'   individual runs. This can be overridden by setting
-#'   `options(rle.length_represented = FALSE)`, which causes it to
+#'   `options(rle.unclass_index = FALSE)`, which causes it to
 #'   return the length of the underlying list (usually 2) instead.
 #'
 #' @examples
@@ -352,9 +351,8 @@ mean.rle <- function(x, na.rm = FALSE, ...){
 #'
 #' @export
 length.rle <- function(x){
-  length_rep <- getOption("rle.length_represented")
-  if(is.null(length_rep) || length_rep) sum(as.numeric(x$lengths))
-  else length(unclass(x))
+  if(!is.null(rle_unclass_index <- getOption("rle.unclass_index")) && rle_unclass_index) length(unclass(x))
+  else  sum(as.numeric(x$lengths))
 }
 
 #' @rdname rle-methods
@@ -461,7 +459,7 @@ as.rle.default <- function(x){
 str.rle <- function(object, ...){
   # This is needed because `str` needs the length of the underlying
   # list rather than that represented by the RLE.
-  op <- options(rle.length_represented = FALSE)
+  op <- options(rle.unclass_index = TRUE)
   on.exit(options(op))
   NextMethod("str")
 }

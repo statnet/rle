@@ -34,7 +34,7 @@ Miscellaneous Common Methods for \code{\link{rle}} Objects
 The \code{\link{length}} method returns the length of the vector
 represented by the object, obtained by summing the lengths of
 individual runs. This can be overridden by setting
-\code{options(rle.length_represented = FALSE)}, which causes it to
+\code{options(rle.unclass_index = FALSE)}, which causes it to
 return the length of the underlying list (usually 2) instead.
 }
 \examples{

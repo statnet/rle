@@ -32,8 +32,8 @@ Supported functions include all elements of the S3
 }
 \examples{
 
-x <- rle(as.logical(rbinom(10,1,.9)))
-y <- rle(as.logical(rbinom(10,1,.1)))
+x <- rle(as.logical(rbinom(20,1,.7)))
+y <- rle(as.logical(rbinom(20,1,.3)))
 
 stopifnot(isTRUE(all.equal(any(x, y),any(inverse.rle(x), inverse.rle(y)))))
 stopifnot(isTRUE(all.equal(any(y),any(inverse.rle(y)))))
@@ -41,7 +41,7 @@ stopifnot(isTRUE(all.equal(any(y),any(inverse.rle(y)))))
 stopifnot(isTRUE(all.equal(sum(inverse.rle(x),inverse.rle(y)),sum(x,y))))
 stopifnot(isTRUE(all.equal(sum(inverse.rle(y)),sum(y))))
 
-y[5:6] <- NA
+y$values[2:3] <- NA
 stopifnot(isTRUE(all.equal(sum(inverse.rle(y), na.rm=TRUE),sum(y, na.rm=TRUE))))
 stopifnot(isTRUE(all.equal(sum(inverse.rle(y), na.rm=FALSE),sum(y, na.rm=FALSE))))
 
