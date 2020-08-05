@@ -30,3 +30,4 @@ writing, the biggest unimplemented feature is the indexing (\code{[})
 operator. It is not possible to extract or replace elements of an
 \code{rle} object.
 }
+

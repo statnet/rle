@@ -3,12 +3,12 @@ Version: 1.0-215
 Date: 2020-07-31
 Title: Common Functions for Run-Length Encoded Vectors
 Authors@R: person("Pavel N.", "Krivitsky", role=c("aut","cre"), email="pavel@statnet.org", comment=c(ORCID="0000-0002-9101-3362"))
-Description: A collection of methods for 'rle' objects.
+Description: A collection of methods and operators for 'rle' objects.
 Depends: R (>= 3.5)
 Imports: methods
+Copyright: file inst/COPYRIGHT
 BugReports: https://github.com/statnet/rle/issues
-License: GPL-3 + file LICENSE
-URL: https://statnet.org
+License: GPL-3
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Encoding: UTF-8
