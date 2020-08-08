@@ -28,18 +28,21 @@
 }
 \value{
 At this time, all functions raise an error except for
-\code{character} inputs. This behaviour can be overridden by setting
-\code{options(rle.unclass_index=TRUE)}.
+\code{\link{character}} indices. This behaviour can be overridden by
+setting \code{options(rle.unclass_index=TRUE)}, which effectively
+\code{\link{unclass}}es the objects before indexing.
 }
 \description{
-These methods are defined and produce an error to future-proof code
-that depends on the \code{rle} package by preventing their use.
+These methods are defined and produce an error (except
+for \code{\link{character}} input) to future-proof code that depends on the
+\code{rle} package by preventing their use.
 }
 \details{
 At this time, the \code{rle} package does not support indexing
-operations, but it is likely to do so in the future. Therefore,
-we reserve the syntax now to prevent users of this package from
-relying on the default behaviour of the indexing operators.
+operations by \code{\link{logical}} or \code{\link{numeric}} indices, but it is
+likely to do so in the future. Therefore, we reserve the syntax
+now to prevent users of this package from relying on the default
+behaviour of the indexing operators.
 }
 \examples{
 

@@ -63,16 +63,16 @@ c.rle <- function(...){
 #'   operators.
 #'
 #' @details Supported operations include all elements of the `Ops`
-#'   group, as well as [xor()]. Within the [Arithmetic] and [Logic]
+#'   group, as well as [`xor`]. Within the [Arithmetic] and [Logic]
 #'   operators, this includes (taken from the R help): `+`, `-`, `*`,
 #'   `/`, `^`, `<` , `>`, `<=`, `>=`, `!=`, `==`, `%%`, `%/%`, `&`,
 #'   `|`, `!`, and `xor`; but excludes non-vector logical functions
-#'   and operators such as [isTRUE()] and [`&&`].
+#'   and operators such as [`isTRUE`] and [`&&`].
 #'
 #' @return In every supported case, the operation should result in an
 #'   [`rle`] that would have resulted had the operation been applied
 #'   to the original (uncompressed) vectors, then compressed using
-#'   [rle()], with the proviso that if the resulting function creates
+#'   [`rle`], with the proviso that if the resulting function creates
 #'   adjacent runs of the same value, they are *not* merged. This must
 #'   be done explicitly with [`compress.rle`]. (At no point in the
 #'   calculation are the uncompressed vectors actually constructed, of
@@ -176,7 +176,7 @@ Ops.rle <- function(e1, e2){
 #' @return In every supported case, the call should result in an
 #'   [`rle`] that would have resulted had the call been applied to the
 #'   original (uncompressed) vector, then compressed using
-#'   [rle()]. (At no point in the calculation is the uncompressed
+#'   [`rle`]. (At no point in the calculation is the uncompressed
 #'   vector actually constructed, of course.)
 #'
 #'   By default, the functions do not merge adjacent
@@ -340,7 +340,7 @@ mean.rle <- function(x, na.rm = FALSE, ...){
 #'   represented by the object, obtained by summing the lengths of
 #'   individual runs. This can be overridden by setting
 #'   `options(rle.unclass_index = FALSE)`, which causes it to
-#'   return the length of the underlying list (usually 2) instead.
+#'   return the length of the underlying representation (usually 2) instead.
 #'
 #' @examples
 #'
@@ -371,7 +371,7 @@ is.na.rle <- function(x){
 #'
 #' @param x an [`rle`] object.
 #'
-#' @param ... see documentation for [`rep()`].
+#' @param ... see documentation for [`rep`].
 #'
 #' @param scale whether to replicate the elements of the
 #'   RLE-compressed vector or the runs.

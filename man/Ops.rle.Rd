@@ -14,7 +14,7 @@ operators.}
 In every supported case, the operation should result in an
 \code{\link{rle}} that would have resulted had the operation been applied
 to the original (uncompressed) vectors, then compressed using
-\code{\link[=rle]{rle()}}, with the proviso that if the resulting function creates
+\code{\link{rle}}, with the proviso that if the resulting function creates
 adjacent runs of the same value, they are \emph{not} merged. This must
 be done explicitly with \code{\link{compress.rle}}. (At no point in the
 calculation are the uncompressed vectors actually constructed, of
@@ -30,11 +30,11 @@ and between an \code{\link{rle}} object and a scalar.
 }
 \details{
 Supported operations include all elements of the \code{Ops}
-group, as well as \code{\link[=xor]{xor()}}. Within the \link{Arithmetic} and \link{Logic}
+group, as well as \code{\link{xor}}. Within the \link{Arithmetic} and \link{Logic}
 operators, this includes (taken from the R help): \code{+}, \code{-}, \code{*},
 \code{/}, \code{^}, \code{<} , \code{>}, \code{<=}, \code{>=}, \code{!=}, \code{==}, \code{\%\%}, \code{\%/\%}, \code{&},
 \code{|}, \code{!}, and \code{xor}; but excludes non-vector logical functions
-and operators such as \code{\link[=isTRUE]{isTRUE()}} and \code{\link{&&}}.
+and operators such as \code{\link{isTRUE}} and \code{\link{&&}}.
 }
 \examples{
 

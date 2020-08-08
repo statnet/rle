@@ -15,7 +15,7 @@
 \arguments{
 \item{x}{an \code{\link{rle}} object.}
 
-\item{...}{see documentation for \code{\link[=rep]{rep()}}.}
+\item{...}{see documentation for \code{\link{rep}}.}
 
 \item{scale}{whether to replicate the elements of the
 RLE-compressed vector or the runs.}

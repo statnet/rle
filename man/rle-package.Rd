@@ -33,7 +33,7 @@ extract or replace individual elements of the vector represented
 by an \code{rle} object, though it is possible to access its
 underlying representation (i.e., \verb{$lenths} and \verb{$values}) by
 name using any of the above operators or the \code{$} operator.
-\item \code{\link[=rep.rle]{rep.rle()}} currently has limited functionality.
+\item Method \code{\link{rep.rle}} currently has limited functionality.
 }
 }
 

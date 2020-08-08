@@ -15,7 +15,7 @@
 In every supported case, the call should result in an
 \code{\link{rle}} that would have resulted had the call been applied to the
 original (uncompressed) vector, then compressed using
-\code{\link[=rle]{rle()}}. (At no point in the calculation is the uncompressed
+\code{\link{rle}}. (At no point in the calculation is the uncompressed
 vector actually constructed, of course.)
 
 By default, the functions do not merge adjacent

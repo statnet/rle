@@ -9,20 +9,23 @@
 #'
 #' @title Indexing Methods for `rle` Objects
 #'
-#' @description These methods are defined and produce an error to future-proof code
-#' that depends on the `rle` package by preventing their use.
+#' @description These methods are defined and produce an error (except
+#'   for [`character`] input) to future-proof code that depends on the
+#'   `rle` package by preventing their use.
 #'
 #' @details At this time, the `rle` package does not support indexing
-#'   operations, but it is likely to do so in the future. Therefore,
-#'   we reserve the syntax now to prevent users of this package from
-#'   relying on the default behaviour of the indexing operators.
+#'   operations by [`logical`] or [`numeric`] indices, but it is
+#'   likely to do so in the future. Therefore, we reserve the syntax
+#'   now to prevent users of this package from relying on the default
+#'   behaviour of the indexing operators.
 #'
 #' @param x,i,name,value,... Arguments to indexing operators. See
 #'   [Extract] documentation in the `base` package.
 #'
 #' @return At this time, all functions raise an error except for
-#'   `character` inputs. This behaviour can be overridden by setting
-#'   `options(rle.unclass_index=TRUE)`.
+#'   [`character`] indices. This behaviour can be overridden by
+#'   setting `options(rle.unclass_index=TRUE)`, which effectively
+#'   [`unclass`]es the objects before indexing.
 #'
 #' @examples
 #'
