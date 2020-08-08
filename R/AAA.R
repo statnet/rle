@@ -33,5 +33,5 @@
 #'   by an `rle` object, though it is possible to access its
 #'   underlying representation (i.e., `$lenths` and `$values`) by
 #'   name using any of the above operators or the `$` operator.
-#' * [rep.rle()] currently has limited functionality.
+#' * Method [`rep.rle`] currently has limited functionality.
 NULL

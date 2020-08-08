@@ -35,7 +35,7 @@ The \code{\link{length}} method returns the length of the vector
 represented by the object, obtained by summing the lengths of
 individual runs. This can be overridden by setting
 \code{options(rle.unclass_index = FALSE)}, which causes it to
-return the length of the underlying list (usually 2) instead.
+return the length of the underlying representation (usually 2) instead.
 }
 \examples{
 x <- rle(as.logical(rbinom(10,1,.7)))
