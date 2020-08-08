@@ -7,7 +7,7 @@
 #######################################################################
 #' @name rle-package
 #' @title The `rle` Package
-#' @description A package implementing common [`base`] and [`stats`]
+#' @description Common [`base`] and [`stats`]
 #'   methods for [`rle`] objects, aiming to make it possible to treat
 #'   them transparently as vectors.
 #'
@@ -15,7 +15,7 @@
 #'
 #' This package grew out of the needs of the `ergm` package for a
 #' run-length encoded representation of extremely long vectors with a
-#' small number of contiguous runs and these functions were originally
+#' small number of contiguous runs, and these functions were originally
 #' implemented in the `statnet.common` package.
 #'
 #' It has been split out into its own package to enable others to use
@@ -25,8 +25,13 @@
 #' @section What works and what doesn't:
 #'
 #' The long-run aim of this package is to make it possible to treat
-#' [`rle`] objects transparently as nameless vectors. As of this
-#' writing, the biggest unimplemented feature is the indexing (`[`)
-#' operator. It is not possible to extract or replace elements of an
-#' `rle` object.
+#' [`rle`] objects transparently as unnamed vectors. As of this
+#' writing, the biggest unimplemented feature are:
+#'
+#' * The indexing (`[` and `[[`) operators. It is not possible to
+#'   extract or replace individual elements of the vector represented
+#'   by an `rle` object, though it is possible to access its
+#'   underlying representation (i.e., `$lenths` and `$values`) by
+#'   name using any of the above operators or the `$` operator.
+#' * [rep.rle()] currently has limited functionality.
 NULL

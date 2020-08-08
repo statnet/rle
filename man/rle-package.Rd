@@ -4,7 +4,7 @@
 \alias{rle-package}
 \title{The \code{rle} Package}
 \description{
-A package implementing common \code{\link{base}} and \code{\link{stats}}
+Common \code{\link{base}} and \code{\link{stats}}
 methods for \code{\link{rle}} objects, aiming to make it possible to treat
 them transparently as vectors.
 }
@@ -13,7 +13,7 @@ them transparently as vectors.
 
 This package grew out of the needs of the \code{ergm} package for a
 run-length encoded representation of extremely long vectors with a
-small number of contiguous runs and these functions were originally
+small number of contiguous runs, and these functions were originally
 implemented in the \code{statnet.common} package.
 
 It has been split out into its own package to enable others to use
@@ -25,9 +25,15 @@ and to facilitate contributions under a simplified license.
 
 
 The long-run aim of this package is to make it possible to treat
-\code{\link{rle}} objects transparently as nameless vectors. As of this
-writing, the biggest unimplemented feature is the indexing (\code{[})
-operator. It is not possible to extract or replace elements of an
-\code{rle} object.
+\code{\link{rle}} objects transparently as unnamed vectors. As of this
+writing, the biggest unimplemented feature are:
+\itemize{
+\item The indexing (\code{[} and \code{[[}) operators. It is not possible to
+extract or replace individual elements of the vector represented
+by an \code{rle} object, though it is possible to access its
+underlying representation (i.e., \verb{$lenths} and \verb{$values}) by
+name using any of the above operators or the \code{$} operator.
+\item \code{\link[=rep.rle]{rep.rle()}} currently has limited functionality.
+}
 }
 
