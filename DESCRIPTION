@@ -1,6 +1,6 @@
 Package: rle
-Version: 1.0-215
-Date: 2020-07-31
+Version: 1.0-219
+Date: 2020-08-08
 Title: Common Functions for Run-Length Encoded Vectors
 Authors@R: person("Pavel N.", "Krivitsky", role=c("aut","cre"), email="pavel@statnet.org", comment=c(ORCID="0000-0002-9101-3362"))
 Description: A collection of methods and operators for 'rle' objects.
