@@ -30,15 +30,15 @@ SEXP sync_RLEs(SEXP lens1, SEXP lens2){
   while(pos1 < length(lens1)){
     left1 += INTEGER(lens1)[pos1];
     pos1++;
-    
+
     while(left1 > left2){
       /*
 	Now, we know that left1 > left2.
 
 	So, we flush from both rle1 and rle2 by the left2's amount,
 	and add on to left2 until left2 is the one "sticking out".
-      */      
-      
+      */
+
       if(left2 != 0){
 	INTEGER(lengths)[opos] = left2;
 	INTEGER(v1i)[opos] = pos1;
@@ -53,14 +53,14 @@ SEXP sync_RLEs(SEXP lens1, SEXP lens2){
       pos2++;
     }
 
-    /* 
+    /*
        Now, left1 <= left2. (If lens2 has run out, then this should
        still hold, since the uncompressed lengths of the input vectors
        must be equal.)
 
        So, we flush from both by the left1's amount.
     */
-      
+
     if(left1 != 0){
       INTEGER(lengths)[opos] = left1;
       INTEGER(v1i)[opos] = pos1;
@@ -72,7 +72,7 @@ SEXP sync_RLEs(SEXP lens1, SEXP lens2){
   }
 
   *INTEGER(nruns) = opos;
-  
+
   SET_VECTOR_ELT(out, 0, lengths);
   SET_VECTOR_ELT(out, 1, v1i);
   SET_VECTOR_ELT(out, 2, v2i);
@@ -111,9 +111,9 @@ SEXP compress_RLE(SEXP lR, SEXP vR, SEXP remapR){
       lengths[o] += nextl;
     }
   }
-  
+
   *nruns = o+1;
-  
+
   SET_VECTOR_ELT(outR, 0, lengthsR);
   SET_VECTOR_ELT(outR, 1, voR);
   SET_VECTOR_ELT(outR, 2, nrunsR);

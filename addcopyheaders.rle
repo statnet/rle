@@ -19,7 +19,7 @@ find R src tests man inst \( -iname '*.r' -or -iname '*.c' -or -iname '*.rd' -or
 		end=' */'
 		endRE=' \*/'
 		;;
-	    r) 	  
+	    r)
 		echo R
 		start='#'
 		startRE="$start"
