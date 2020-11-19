@@ -5,5 +5,6 @@
 [![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/rle?color=2ED968)](http://cranlogs.r-pkg.org/)
 [![cran version](http://www.r-pkg.org/badges/version/rle)](https://cran.r-project.org/package=rle)
 [![Coverage status](https://codecov.io/gh/statnet/rle/branch/master/graph/badge.svg)](https://codecov.io/github/statnet/rle?branch=master)
+[![R build status](https://github.com/statnet/rle/workflows/R-CMD-check/badge.svg)](https://github.com/statnet/rle/actions)
 
 A collection of methods for `rle` objects from the `base` package.

@@ -10,3 +10,4 @@ appveyor.yml
 ^revdep$
 ^README.md$
 ^addcopyheaders.rle
+^\.github$
