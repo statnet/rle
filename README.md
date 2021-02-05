@@ -1,6 +1,5 @@
 # `rle`: Common Functions for Run-Length Encoded Vectors
 
-[![Build Status](https://travis-ci.org/statnet/rle.svg?branch=master)](https://travis-ci.org/statnet/rle)
 [![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/rle?color=2ED968)](https://cranlogs.r-pkg.org/)
 [![cran version](https://www.r-pkg.org/badges/version/rle)](https://cran.r-project.org/package=rle)
 [![Coverage status](https://codecov.io/gh/statnet/rle/branch/master/graph/badge.svg)](https://codecov.io/github/statnet/rle?branch=master)
