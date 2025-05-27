@@ -47,6 +47,7 @@
 c.rle <- function(...){
   l <- list(...)
   l <- lapply(l, as.rle)
+
   structure(list(
     lengths = do.call(c, lapply(l, `[[`, "lengths")),
     values = do.call(c, lapply(l, `[[`, "values"))
@@ -124,16 +125,16 @@ Ops.rle <- function(e1, e2){
       structure(list(lengths = integer(0),
                      values = FUN(e1, e2$values)),
                 class = "rle")
-    }else if(l == 1L){
+    }else if (l == 1L){
       structure(list(lengths = e2$lengths,
                      values = FUN(e1, e2$values)),
                 class = "rle")
-    }else{
+    }else{ 
       stop("Binary operations between a non-scalar and an ", sQuote("rle"), " object are not supported at this time.")
     }
   }else if(!nzchar(.Method[2L])){ # e2 is not an rle but e1 is
     l <- length(e2)
-    if(l == 0L){
+    if(l == 0L) {
       structure(list(lengths = integer(0),
                      values = FUN(e1$values, e2)),
                 class = "rle")
@@ -153,7 +154,6 @@ Ops.rle <- function(e1, e2){
               class = "rle")
   }
 }
-
 #' Mathematical functions for [`rle`] Objects
 #'
 #' Mathematical functions that work independently elementwise on vectors described in [Math] are implemented for [`rle`] objects. See Details for list of exceptions.

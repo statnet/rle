@@ -137,7 +137,7 @@ jobs:
 
           cpplint_re = re.compile('^::warning file=(?P<file>.+),line=(?P<line>[0-9]+)::')
           o = filter_messages(open("cpplint.base.txt"), open("cpplint.head.txt"), patches,
-                              cpplint_re, lambda l, o, n: l.replace(f',line={o},', f',line={n},'))
+                              cpplint_re, lambda l, o, n: l.replace(f',line={o}::', f',line={n}::'))
           split_lines(o, 'cpplint-')
         shell: python
 
@@ -180,7 +180,3 @@ jobs:
       - name: Print cpplint warnings 5
         if: ${{ hashFiles('cpplint-5.txt') != '' }}
         run: cat "cpplint-5.txt"
-
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3

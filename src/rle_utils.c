@@ -29,6 +29,7 @@ SEXP sync_RLEs(SEXP lens1, SEXP lens2){
 */
   while(pos1 < length(lens1)){
     left1 += INTEGER(lens1)[pos1];
+
     pos1++;
 
     while(left1 > left2){
@@ -63,19 +64,17 @@ SEXP sync_RLEs(SEXP lens1, SEXP lens2){
 
     if(left1 != 0){
       INTEGER(lengths)[opos] = left1;
-      INTEGER(v1i)[opos] = pos1;
+      INTEGER(v1i)[opos]=pos1;
       INTEGER(v2i)[opos] = pos2;
       left2 -= left1;
       left1 = 0; // I.e., subtract left1 from left1.
       opos++;
     }
   }
-
   *INTEGER(nruns) = opos;
-
   SET_VECTOR_ELT(out, 0, lengths);
   SET_VECTOR_ELT(out, 1, v1i);
-  SET_VECTOR_ELT(out, 2, v2i);
+  SET_VECTOR_ELT(out, 2, v2i);  
   SET_VECTOR_ELT(out, 3, nruns);
 
   UNPROTECT(5);
@@ -85,7 +84,7 @@ SEXP sync_RLEs(SEXP lens1, SEXP lens2){
 
 SEXP compress_RLE(SEXP lR, SEXP vR, SEXP remapR){
   Rboolean remap = asLogical(remapR);
-  unsigned int *l = (unsigned int *) INTEGER(lR), *v = (unsigned int *) INTEGER(vR);
+  unsigned int *l = (unsigned int *) INTEGER(lR), *v = (unsigned int *) INTEGER(vR); 
 
   const char *names[] = {"lengths", "vali", "nruns", ""};
   SEXP outR = PROTECT(mkNamed(VECSXP, names));
