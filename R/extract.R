@@ -85,6 +85,9 @@ NULL
 IDXERR <- paste("Indexing of", sQuote("rle"), "objects by logical or negative",
                 "numeric indexes is not implemented at this time.")
 
+# TODO: This is built into R 4.4, so delete around mid 2026.
+`%||%` <- function(x, y) if (is.null(x)) y else x
+
 #' @rdname Extract.rle
 #' @export
 `[.rle` <- function(x, i, ...,
