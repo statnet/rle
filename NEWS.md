@@ -1,3 +1,9 @@
-# rle 1.0
+# rle 0.10
 
-Initial release, split out of the `statnet.common` package.
+* Indexing by positive numeric indices using `[` and `[[` operators now works for extraction, though not assignment.
+
+* A helper function, `index_to_run()` can be used to map the index of an element represented in an `rle` the run that contains it.
+
+# rle 0.9
+
+* Initial release, split out of the `statnet.common` package.
