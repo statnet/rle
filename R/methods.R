@@ -1,10 +1,12 @@
-#  File R/rle_utils.R in package rle, currently hosted at https://github.com/statnet/rle .
+#  File R/methods.R in package rle, currently hosted at
+#  https://github.com/statnet/rle .
 #
-#  This software is distributed under the GNU General Public License Version 3 or later.
-#  A copy of this license may be found at https://www.gnu.org/licenses/gpl-3.0.en.html .
+#  This software is distributed under the GNU General Public License Version 3
+#  or later. A copy of this license may be found at
+#  https://www.gnu.org/licenses/gpl-3.0.en.html .
 #
-#  Copyright 2017-2020 Pavel N. Krivitsky and others (see inst/COPYRIGHT).
-#######################################################################
+#  Copyright 2017-2025 Pavel N. Krivitsky and others (see inst/COPYRIGHT).
+################################################################################
 .check_lengths <- function(rle1, rle2){
   if(sum(as.numeric(rle1$lengths))!=sum(as.numeric(rle2$lengths)))
     stop("At this time, binary rle operators require the vectors represented by the encoding to have equal lengths.")

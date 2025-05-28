@@ -18,6 +18,7 @@ find R src tests man inst \( -iname '*.r' -or -iname '*.c' -or -iname '*.rd' -or
 		contRE=' \*'
 		end=' */'
 		endRE=' \*/'
+                tgtw=76
 		;;
 	    r)
 		echo R
@@ -25,8 +26,9 @@ find R src tests man inst \( -iname '*.r' -or -iname '*.c' -or -iname '*.rd' -or
 		startRE="$start"
 		cont='#'
 		contRE="$cont"
-		end='#######################################################################'
-		endRE="$end"
+		end='################################################################################'
+		endRE="#######################################################################*"
+                tgtw=77
 		;;
 	    rd)
 		echo -n Rd
@@ -41,21 +43,25 @@ find R src tests man inst \( -iname '*.r' -or -iname '*.c' -or -iname '*.rd' -or
 		startRE="$start"
 		cont='%'
 		contRE="$cont"
-		end='%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
-		endRE="$end"
+		end='%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+		endRE="%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*"
+                tgtw=77
 		;;
 	    *)
 	    continue
 	esac
-	
+
+	echo -n "$start  " > ${file}.tmp
 	echo \
-"$start  File $file in package $pkgname, currently hosted at https://github.com/statnet/rle .
-$cont
-$cont  This software is distributed under the GNU General Public License Version 3 or later.
-$cont  A copy of this license may be found at https://www.gnu.org/licenses/gpl-3.0.en.html .
-$cont
-$cont  Copyright $copyyears Pavel N. Krivitsky and others (see inst/COPYRIGHT).
-$end"  >> ${file}.tmp
+"File $file in package $pkgname, currently hosted at
+https://github.com/statnet/rle .
+
+This software is distributed under the GNU General Public License Version 3 or later. A copy of this license may be found at https://www.gnu.org/licenses/gpl-3.0.en.html .
+
+Copyright $copyyears Pavel N. Krivitsky and others (see inst/COPYRIGHT)." |
+            fold -s -w $tgtw | sed '2,${s!^!'"$cont"'  !}' |
+            sed 's/ *$//' >> ${file}.tmp
+        echo "$end"  >> ${file}.tmp
 	# The following code (which requires pcregrep), strips out
 	# text that follows the general pattern of a block of
 	# commented out lines the first of which begins with "File",
