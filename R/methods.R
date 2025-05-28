@@ -462,7 +462,7 @@ str.rle <- function(object, ...){
   NextMethod("str")
 }
 
-#' Find which runs a particular index belongs to
+#' Map an element in a vector represented by an [`rle`] to its run
 #'
 #' @param x an [`rle`] object.
 #' @param i a numeric vector of indices to map; fractional values are

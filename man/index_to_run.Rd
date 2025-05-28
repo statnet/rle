@@ -3,7 +3,7 @@
 \name{index_to_run}
 \alias{index_to_run}
 \alias{index_to_run.rle}
-\title{Find which runs a particular index belongs to}
+\title{Map an element in a vector represented by an \code{\link{rle}} to its run}
 \usage{
 index_to_run(x, i, ...)
 
@@ -23,7 +23,7 @@ mapped to 0. Indexes above the range represented by \code{x} are
 mapped to the number of runs + 1.
 }
 \description{
-Find which runs a particular index belongs to
+Map an element in a vector represented by an \code{\link{rle}} to its run
 }
 \note{
 This function is generic for future-proofing.
