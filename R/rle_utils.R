@@ -461,3 +461,52 @@ str.rle <- function(object, ...){
   on.exit(options(op))
   NextMethod("str")
 }
+
+#' Find which runs a particular index belongs to
+#'
+#' @param x an [`rle`] object.
+#' @param i a numeric vector of indices to map; fractional values are
+#'   rounded down.
+#' @param ... additional arguments to methods.
+#'
+#' @note This function is generic for future-proofing.
+#'
+#' @return An integer vector. Negative values of `i` and 0 are always
+#'   mapped to 0. Indexes above the range represented by `x` are
+#'   mapped to the number of runs + 1.
+#'
+#' @export
+index_to_run <- function(x, i, ...) UseMethod("index_to_run")
+
+#' @rdname index_to_run
+#'
+#' @examples
+#' # From example(rle):
+#' z <- c(TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE)
+#' rle(z)
+#'
+#' stopifnot(identical(
+#'   index_to_run(rle(z), (-1):10),
+#'   c(0L, 0L, 1L, 1L, 2L, 2L, 3L, 4L, 5L, 5L, 5L, 6L)
+#' ))
+#' @export
+index_to_run.rle <- function(x, i, ...) {
+  i <- floor(i)
+  i <- pmax(i, 0L)
+
+  # Calculate the run ends, handling integer overflow if needed.
+  #
+  # TODO: We might want to have an option() as to whether to try
+  #   with ints first or to go directly to double.
+  ends <- tryCatch(
+    cumsum(c(1L, x$lengths)),
+    warning = function(w) {
+      if (startsWith(w$message, "integer overflow"))
+        cumsum(as.numeric(c(1L, x$lengths)))
+      else stop(sQuote("rle"), " index calculation failed")
+    })
+
+  # Calculate to which run each value of i belongs.
+  .bincode(i, c(0L, ends, max(i, ends[length(ends)], na.rm = TRUE) + 1L),
+           right = FALSE) - 1L
+}
