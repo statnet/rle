@@ -5,8 +5,6 @@
 #
 #  Copyright 2017-2020 Pavel N. Krivitsky and others (see inst/COPYRIGHT).
 #######################################################################
-#' @name rle-package
-#' @title The `rle` Package
 #' @description Common [`base`] and [`stats`]
 #'   methods for [`rle`] objects, aiming to make it possible to treat
 #'   them transparently as vectors.
@@ -28,10 +26,12 @@
 #' [`rle`] objects transparently as unnamed vectors. As of this
 #' writing, the biggest unimplemented feature are:
 #'
-#' * The indexing (`[` and `[[`) operators. It is not possible to
-#'   extract or replace individual elements of the vector represented
-#'   by an `rle` object, though it is possible to access its
-#'   underlying representation (i.e., `$lenths` and `$values`) by
-#'   name using any of the above operators or the `$` operator.
+#' * It is possible to use the indexing (`[` and `[[`) operators to
+#'   extract by positive numeric indices but not by logical or
+#'   negative numeric indices, and the implementation is far from
+#'   optimal. It is not possible to replace individual elements of the
+#'   vector represented by an `rle` object. See [Extract.rle] for more
+#'   details.
+#'
 #' * Method [`rep.rle`] currently has limited functionality.
-NULL
+"_PACKAGE"
